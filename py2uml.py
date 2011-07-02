@@ -19,7 +19,7 @@ class Processor:
 	def __init__(self):
 		self.visited = set()
 
-		self.classes = dict()
+		self.modules = dict()
 
 	def processFiles(self,filenames):
 		for file in filenames:
@@ -78,16 +78,19 @@ class Processor:
 	def processClass(self,someClass):
 		name = someClass.__name__
 		log("Processing class: " + name + " in module " + someClass.__module__)
+		moduleName = someClass.__module__
 
-		
-		if not name in self.classes:
-			self.classes[name] = ClassNode(name, someClass.__bases__)
+		if not moduleName in self.modules:
+			self.modules[moduleName] = list()
+
+		classNode = ClassNode(name, someClass.__bases__)
+		self.modules[moduleName].append(classNode)
 
 		for someName in dir(someClass):
 			something = getattr(someClass, someName)
 
 			if inspect.ismethod(something):
-				self.processMethod(something, self.classes[name])
+				self.processMethod(something, classNode)
 
 	def processMethod(self,someMethod, classNode):
 		log("Processing method: " + someMethod.__name__)
@@ -115,17 +118,26 @@ digraph G {
 
 		classnameToDot = lambda name :  "Class" + name
 
-		for c in self.classes.values():
-			line(classnameToDot(c.name) + " [")
-			out.write("label = \"{" + c.name + "||")
-			
-			for method in c.methods:
-				out.write("+ " + method.__name__)
-				argspec = inspect.getargspec(method)
-				out.write(inspect.formatargspec(*(argspec[:2])) + "\l")
+		for (name, module) in self.modules.items():
+			if len(module) > 1:
+				line("subgraph cluster{modulename} {".replace("{modulename}",
+					name.replace(".", "")))
+				line("   label = \"Module " + name + "\"")
 
-			out.write("}\"\n")
-			line("]")
+			for c in module:
+				line(classnameToDot(c.name) + " [")
+				out.write("label = \"{" + c.name + "||")
+				
+				for method in c.methods:
+					out.write("+ " + method.__name__)
+					argspec = inspect.getargspec(method)
+					out.write(inspect.formatargspec(*(argspec[:2])) + "\l")
+
+				out.write("}\"\n")
+				line("]")
+
+			if len(module) > 1:
+				line("}")
 
 		out.write("""
 		edge [
@@ -133,10 +145,11 @@ digraph G {
         ]
 		""")
 
-		for c in self.classes.values():
-			for parent in c.parents:
-				line(classnameToDot(c.name) + " -> " +
-						classnameToDot(parent.__name__))
+		for module in self.modules.values():
+			for c in module:
+				for parent in c.parents:
+					line(classnameToDot(c.name) + " -> " +
+							classnameToDot(parent.__name__))
 
 		line("}")
 
