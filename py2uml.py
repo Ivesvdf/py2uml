@@ -30,16 +30,14 @@ class Processor:
 			self.processFile(file)
 
 	def processFile(self,filename):
-		moduleName = filename.replace(".py", "").replace("/", ".")
+		moduleName = filename.replace("./", "").replace(".py", "").replace("/", ".")
 		log("Processing file for module " + moduleName)
 		__import__(moduleName, locals(), globals())
 		self.processModule(sys.modules[moduleName])
 
 	def processModule(self,module):
 		log("Processing module " + str(module))
-		for name in dir(module):
-			something = getattr(module, name)
-
+		for (name, something) in inspect.getmembers(module):
 			if type(something) == dict:
 				continue 
 
@@ -69,9 +67,7 @@ class Processor:
 		classNode = ClassNode(name, someClass.__bases__)
 		self.modules[moduleName].append(classNode)
 
-		for someName in dir(someClass):
-			something = getattr(someClass, someName)
-
+		for (someName, something) in inspect.getmembers(someClass):
 			if inspect.ismethod(something):
 				self.processMethod(something, classNode)
 
