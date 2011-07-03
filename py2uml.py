@@ -31,6 +31,11 @@ class Processor:
 
 	def processFile(self,filename):
 		moduleName = filename.replace("./", "").replace(".py", "").replace("/", ".")
+
+		if filename.find("__init__.py") >= 0:
+			log("Ignoring __init__.py file")
+			return
+
 		log("Processing file for module " + moduleName)
 		__import__(moduleName, locals(), globals())
 		self.processModule(sys.modules[moduleName])
