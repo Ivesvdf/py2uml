@@ -22,35 +22,18 @@ class Processor:
 		self.modules = dict()
 
 	def processFiles(self,filenames):
+		import os
+		sys.path.append(os.getcwd())
+		log("currently in " + str(os.getcwd()))
 		for file in filenames:
 			log("Processing file " + file)
 			self.processFile(file)
 
 	def processFile(self,filename):
-		try:
-			modulename = filename.replace("/", ".").replace(".py", "")
-			module = __import__(modulename, fromlist=modulename.split('.')[1:])
-		except ImportError:
-			# Maybe no __init__.py file present in dir, try making one
-			pos = filename.rfind("/")
-			package = filename[:pos+1]
-			initfile = package + "__init__.py"
-			if pos >= 0:
-				try:
-					f = open(initfile)
-				except IOError:
-					log("No __init__.py file present in " + package)
-					log("Creating __init__.py file in " + package)
-					f = open(initfile, "w")
-					f.close()
-					log("Trying to load once again")
-					module = __import__(modulename,
-							fromlist=modulename.split('.')[1:])
-					log("Removing __init__ file")
-					import os
-					os.remove(initfile)
-					os.remove(initfile + "c")
-		self.processModule(module)
+		moduleName = filename.replace(".py", "").replace("/", ".")
+		log("Processing file for module " + moduleName)
+		__import__(moduleName, locals(), globals())
+		self.processModule(sys.modules[moduleName])
 
 	def processModule(self,module):
 		log("Processing module " + str(module))

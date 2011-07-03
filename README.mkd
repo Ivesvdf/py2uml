@@ -9,5 +9,8 @@ At the moment, this should be used like
 
     find src/ -type f -iname "*.py"  | xargs python py2uml.py | dot -T png -o test.png
 
+*from the directory in which the file that's normally executed is located.*
+(this is necessary to get the imports in your likes right)
+
 Later on, support for entire directories will appear...
 
