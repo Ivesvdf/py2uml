@@ -102,6 +102,20 @@ digraph G {
 
 		classnameToDot = lambda name :  "Class" + name
 
+		def isPublic(method):
+			if method.__name__.find("_") == 0 and \
+				method.__name__.rfind("_") < len(method.__name__)-1:
+				return False
+			else:
+				return True
+
+		def writeDecl(out, method, symbol):
+			out.write(symbol + " ")
+
+			out.write(method.__name__)
+			argspec = inspect.getargspec(method)
+			out.write(inspect.formatargspec(*(argspec[:2])) + "\l")
+
 		for (name, module) in self.modules.items():
 			if len(module) > 1:
 				line("subgraph cluster{modulename} {".replace("{modulename}",
@@ -110,12 +124,19 @@ digraph G {
 
 			for c in module:
 				line(classnameToDot(c.name) + " [")
-				out.write("label = \"{" + c.name + "||")
+
+
+				out.write("label = \"{" + c.name + "|")
 				
 				for method in c.methods:
-					out.write("+ " + method.__name__)
-					argspec = inspect.getargspec(method)
-					out.write(inspect.formatargspec(*(argspec[:2])) + "\l")
+					if not isPublic(method):
+						writeDecl(out, method, "-")
+
+				out.write("|")
+				
+				for method in c.methods:
+					if isPublic(method):
+						writeDecl(out, method, "+")
 
 				out.write("}\"\n")
 				line("]")
