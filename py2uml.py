@@ -16,10 +16,11 @@ class ClassNode:
 		self.methods.append(method)
 
 class Processor:
-	def __init__(self):
+	def __init__(self, **kwargs):
 		self.visited = set()
-
 		self.modules = dict()
+		self.maxMethods = kwargs["maxMethods"] if kwargs["maxMethods"] != None else -1 + 2**31
+		self.namesOnly = kwargs["namesOnly"]
 
 	def processFiles(self,filenames):
 		import os
@@ -126,17 +127,29 @@ digraph G {
 				line(classnameToDot(c.name) + " [")
 
 
-				out.write("label = \"{" + c.name + "|")
+				out.write("label = \"{" + c.name)
 				
-				for method in c.methods:
-					if not isPublic(method):
-						writeDecl(out, method, "-")
 
-				out.write("|")
-				
-				for method in c.methods:
-					if isPublic(method):
-						writeDecl(out, method, "+")
+				if not self.namesOnly:
+					out.write("|")
+					
+					methodsTried = 0
+					for method in c.methods:
+						if not isPublic(method):
+							if methodsTried < self.maxMethods:
+								writeDecl(out, method, "-")
+							methodsTried += 1
+
+					out.write("|")
+					
+					for method in c.methods:
+						if isPublic(method):
+							if methodsTried < self.maxMethods:
+								writeDecl(out, method, "+")
+							methodsTried += 1
+
+					if methodsTried > self.maxMethods:
+						out.write("...........\l")
 
 				out.write("}\"\n")
 				line("]")
@@ -159,7 +172,30 @@ digraph G {
 		line("}")
 
 if __name__ == "__main__":
-	log("Starting processing of argument vector")
-	proc = Processor()
-	proc.processFiles(sys.argv[1:])
-	proc.toDot(sys.stdout)
+	if len(sys.argv) == 1:
+		print("USAGE: " + sys.argv[0] + " [--names-only] [--max-methods=<n>] <pythonfiles>")
+	else:
+		log("Starting processing of argument vector")
+		maxMethods = None
+		namesOnly = False
+		import re
+		deleteArgs = []
+		for arg in sys.argv[1:]:
+			maxMethodsString = "--max-methods="
+			if re.match(maxMethodsString + "[0-9]+", arg):
+				maxMethods = int(arg[len(maxMethodsString):])
+				log("Setting max methods to " + str(maxMethods))
+				deleteArgs.append(arg)
+
+			if arg == "--names-only":
+				namesOnly = True
+				log("Setting names only to True")
+				deleteArgs.append(arg)
+				
+		# Remove non-file args from the argument list
+		for arg in deleteArgs:
+			sys.argv.remove(arg)
+
+		proc = Processor(maxMethods = maxMethods, namesOnly = namesOnly)
+		proc.processFiles(sys.argv[1:])
+		proc.toDot(sys.stdout)
