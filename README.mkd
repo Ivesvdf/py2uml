@@ -23,6 +23,7 @@ Command:
     ../../py2uml.py animals.py | dot -T png -o output.png
 
 *animals.py:*
+
     class Animal:
     	def __init__(self):
     		pass
@@ -42,7 +43,7 @@ Command:
     
     
 
-which generates
+which generates  
 ![](https://raw.github.com/Ivesvdf/py2uml/master/examples/example1/output.png)
 
 
@@ -52,6 +53,7 @@ Command:
     ../../py2uml.py *.py | dot -T png -o output.png
 
 *animal.py:*
+
     class Animal:
     	def __init__(self):
     		pass
@@ -60,11 +62,13 @@ Command:
     		pass
     
 *cat.py:*
+
     from animal import Animal
     
     class Cat(Animal):
     	pass
 *dog.py:*
+
     from animal import Animal
     
     class Dog(Animal):
@@ -74,7 +78,7 @@ Command:
     	def __somePrivateMethod():
     		pass
 
-which generates
+which generates  
 ![](https://raw.github.com/Ivesvdf/py2uml/master/examples/example2/output.png)
 
 
@@ -84,6 +88,7 @@ Command:
     ../../py2uml.py --names-only *.py | dot -T png -o output.png
 
 *animal.py:*
+
     class Animal:
     	def __init__(self):
     		pass
@@ -92,11 +97,13 @@ Command:
     		pass
     
 *cat.py:*
+
     from animal import Animal
     
     class Cat(Animal):
     	pass
 *dog.py:*
+
     from animal import Animal
     
     class Dog(Animal):
@@ -106,7 +113,7 @@ Command:
     	def __somePrivateMethod():
     		pass
 
-which generates
+which generates  
 ![](https://raw.github.com/Ivesvdf/py2uml/master/examples/example3/output.png)
 
 
@@ -116,6 +123,7 @@ Command:
     ../../py2uml.py --max-methods=2 *.py | dot -T png -o output.png
 
 *animal.py:*
+
     class Animal:
     	def __init__(self):
     		pass
@@ -124,11 +132,13 @@ Command:
     		pass
     
 *cat.py:*
+
     from animal import Animal
     
     class Cat(Animal):
     	pass
 *dog.py:*
+
     from animal import Animal
     
     class Dog(Animal):
@@ -138,7 +148,6 @@ Command:
     	def __somePrivateMethod():
     		pass
 
-which generates
+which generates  
 ![](https://raw.github.com/Ivesvdf/py2uml/master/examples/example4/output.png)
-
 
