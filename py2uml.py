@@ -16,11 +16,11 @@ class ClassNode:
 		self.methods.append(method)
 
 class Processor:
-	def __init__(self, **kwargs):
+	def __init__(self, maxMethods, namesOnly):
 		self.visited = set()
 		self.modules = dict()
-		self.maxMethods = kwargs["maxMethods"] if kwargs["maxMethods"] != None else -1 + 2**31
-		self.namesOnly = kwargs["namesOnly"]
+		self.maxMethods = maxMethods if maxMethods != None else -1+2**31
+		self.namesOnly = namesOnly
 
 	def processFiles(self,filenames):
 		import os
