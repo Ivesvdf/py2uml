@@ -14,3 +14,131 @@ At the moment, this should be used like
 
 Later on, support for entire directories will appear...
 
+Please note that your code does have to compile (all files will be imported). 
+
+## Examples ##
+### Example 1 ###
+Command: 
+
+    ../../py2uml.py animals.py | dot -T png -o output.png
+
+*animals.py:*
+    class Animal:
+    	def __init__(self):
+    		pass
+    
+    	def makeNoise():
+    		pass
+    
+    class Dog(Animal):
+    	def wagTail():
+    		pass
+    
+    	def __somePrivateMethod():
+    		pass
+    
+    class Cat(Animal):
+    	pass
+    
+    
+
+which generates
+![](https://raw.github.com/Ivesvdf/py2uml/master/examples/example1/output.png)
+
+
+### Example 2 ###
+Command: 
+
+    ../../py2uml.py *.py | dot -T png -o output.png
+
+*animal.py:*
+    class Animal:
+    	def __init__(self):
+    		pass
+    
+    	def makeNoise():
+    		pass
+    
+*cat.py:*
+    from animal import Animal
+    
+    class Cat(Animal):
+    	pass
+*dog.py:*
+    from animal import Animal
+    
+    class Dog(Animal):
+    	def wagTail():
+    		pass
+    
+    	def __somePrivateMethod():
+    		pass
+
+which generates
+![](https://raw.github.com/Ivesvdf/py2uml/master/examples/example2/output.png)
+
+
+### Example 3 ###
+Command: 
+
+    ../../py2uml.py --names-only *.py | dot -T png -o output.png
+
+*animal.py:*
+    class Animal:
+    	def __init__(self):
+    		pass
+    
+    	def makeNoise():
+    		pass
+    
+*cat.py:*
+    from animal import Animal
+    
+    class Cat(Animal):
+    	pass
+*dog.py:*
+    from animal import Animal
+    
+    class Dog(Animal):
+    	def wagTail():
+    		pass
+    
+    	def __somePrivateMethod():
+    		pass
+
+which generates
+![](https://raw.github.com/Ivesvdf/py2uml/master/examples/example3/output.png)
+
+
+### Example 4 ###
+Command: 
+
+    ../../py2uml.py --max-methods=2 *.py | dot -T png -o output.png
+
+*animal.py:*
+    class Animal:
+    	def __init__(self):
+    		pass
+    
+    	def makeNoise():
+    		pass
+    
+*cat.py:*
+    from animal import Animal
+    
+    class Cat(Animal):
+    	pass
+*dog.py:*
+    from animal import Animal
+    
+    class Dog(Animal):
+    	def wagTail():
+    		pass
+    
+    	def __somePrivateMethod():
+    		pass
+
+which generates
+![](https://raw.github.com/Ivesvdf/py2uml/master/examples/example4/output.png)
+
+
